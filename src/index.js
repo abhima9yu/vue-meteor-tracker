@@ -128,6 +128,8 @@ export default {
           // Reactive data
           for (let key in meteor) {
             if (key.charAt(0) !== '$') {
+              console.log('00000000000000')
+              console.log(key)
               this.$addMeteorData(key, meteor[key])
             }
           }
@@ -188,6 +190,8 @@ export default {
               }
               const autorun = this.$autorun(() => {
                 const ready = handle.ready()
+                console.log('22222222222######')
+                console.log(ready)
                 set(this.$data.$meteor.subs, key, ready)
                 // Wait for the new subscription to be ready before stoping the old one
                 if (ready && oldSub) {
@@ -284,29 +288,41 @@ export default {
           // Function run
           const setResult = result => {
             result = getResult(result)
+            console.log('11111111111111$$$$$$$$$$$$')
+            console.log(key)
+            console.log(result)
+            console.log(this.$data.$meteor)
             set(this.$data.$meteor.data, key, result)
           }
 
           // Vue autorun
-          const unwatch = this.$watch(func, noop)
-          const watcher = this._watchers.find(w => w.getter === func)
+          //const unwatch = this.$watch(func, noop)
+          //const watcher = this._watchers.find(w => w.getter === func)
 
           // Meteor autorun
           let computation = this.$autorun(() => {
             // Vue watcher deps are also-rebuilt
-            const result = watcher.get()
+            const result = func.call(this)
+            console.log('9999')
+            console.log(result)
             setResult(result)
           })
+
+          console.log('22222222222222222$$$$4')
+          console.log(computation)
+
           const unautorun = () => {
             if (computation) this.$stopHandle(computation)
           }
           // Update from Vue (override)
-          watcher.update = () => {
-            computation.invalidate()
-          }
+          //watcher.update = () => {
+            //computation.invalidate()
+          //}
+
+          computation.onS
 
           return () => {
-            unwatch()
+            //unwatch()
             unautorun()
           }
         },
@@ -318,6 +334,7 @@ export default {
             if (!computation) {
               // Update from Meteor
               let dirty = false
+              console.log("%%%%%%%%%%%%%%%%%%%%%%%5555")
               computation = autorunMethod(computation => {
                 dirty = true
                 watcher.value = getResult(cb.call(this))

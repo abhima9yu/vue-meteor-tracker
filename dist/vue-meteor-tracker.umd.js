@@ -1688,8 +1688,6 @@ function hasProperty(holder, key) {
   return typeof holder !== 'undefined' && holder.hasOwnProperty(key);
 }
 
-var noop = function noop() {};
-
 var set$1 = void 0;
 
 var index = {
@@ -1809,6 +1807,8 @@ var index = {
           // Reactive data
           for (var _key in meteor) {
             if (_key.charAt(0) !== '$') {
+              console.log('00000000000000');
+              console.log(_key);
               this.$addMeteorData(_key, meteor[_key]);
             }
           }
@@ -1872,6 +1872,8 @@ var index = {
               }
               var autorun = this.$autorun(function () {
                 var ready = handle.ready();
+                console.log('22222222222######');
+                console.log(ready);
                 set$1(_this3.$data.$meteor.subs, key, ready);
                 // Wait for the new subscription to be ready before stoping the old one
                 if (ready && oldSub) {
@@ -1970,31 +1972,41 @@ var index = {
           // Function run
           var setResult = function setResult(result) {
             result = getResult(result);
+            console.log('11111111111111$$$$$$$$$$$$');
+            console.log(key);
+            console.log(result);
+            console.log(_this5.$data.$meteor);
             set$1(_this5.$data.$meteor.data, key, result);
           };
 
           // Vue autorun
-          var unwatch = this.$watch(func, noop);
-          var watcher = this._watchers.find(function (w) {
-            return w.getter === func;
-          });
+          //const unwatch = this.$watch(func, noop)
+          //const watcher = this._watchers.find(w => w.getter === func)
 
           // Meteor autorun
           var computation = this.$autorun(function () {
             // Vue watcher deps are also-rebuilt
-            var result = watcher.get();
+            var result = func.call(_this5);
+            console.log('9999');
+            console.log(result);
             setResult(result);
           });
+
+          console.log('22222222222222222$$$$4');
+          console.log(computation);
+
           var unautorun = function unautorun() {
             if (computation) _this5.$stopHandle(computation);
           };
           // Update from Vue (override)
-          watcher.update = function () {
-            computation.invalidate();
-          };
+          //watcher.update = () => {
+          //computation.invalidate()
+          //}
+
+          computation.onS;
 
           return function () {
-            unwatch();
+            //unwatch()
             unautorun();
           };
         },
@@ -2008,6 +2020,7 @@ var index = {
             if (!computation) {
               // Update from Meteor
               var dirty = false;
+              console.log("%%%%%%%%%%%%%%%%%%%%%%%5555");
               computation = autorunMethod(function (computation) {
                 dirty = true;
                 watcher.value = getResult(cb.call(_this6));
